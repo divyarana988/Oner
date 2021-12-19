@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    },
+  },
     role: {
         type: String,
         default:"user"
@@ -49,7 +49,6 @@ userSchema.pre("save", async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
 });
 
-
 //jwttoken
 userSchema.methods.getJWTToken = function () {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
@@ -57,4 +56,10 @@ userSchema.methods.getJWTToken = function () {
     })
 };
 
-module.exports = mongoose.model("user", userSchema);
+//comapre pasword
+userSchema.methods.comparePassword = async function (password) {
+  console.log("inside comparePassword");
+  return await bcrypt.compare(password, this.password);
+}
+
+module.exports = mongoose.model("User", userSchema);
